@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+if ! command -v jq &> /dev/null; then
+  echo "jq command not found."
+  echo "Do you want to install jq? (y/n)"
+  read -r answer
+  if [[ "$answer" =~ ^[Yy]$ ]]; then
+    if command -v brew &> /dev/null; then
+      brew install jq
+    elif command -v apt-get &> /dev/null; then
+      sudo apt-get update && sudo apt-get install jq -y
+    else
+      echo "Cannot install jq automatically. Please install it manually."
+      exit 1
+    fi
+  else
+    echo "Without jq, the script cannot continue."
+    exit 1
+  fi
+fi
+
+CONFIG_FILE="$HOME/.openrouter_key"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+  echo "🔑 Enter your OpenRouter API key (starts with sk-...):"
+  read -r KEY
+  echo "$KEY" > "$CONFIG_FILE"
+  chmod 600 "$CONFIG_FILE"
+  echo "✅ The key is stored in $CONFIG_FILE"
+fi
+
+OPENROUTER_API_KEY=$(<"$CONFIG_FILE")
+
+echo "Write your question:"
+read user_question
+
+PROMPT="Answer briefly (1-2 sentences). If you need to use examples, use them. Write in the language to be used in the following text: $user_question"
+
+json_payload=$(jq -n \
+  --arg question "$PROMPT" \
+  '{
+    model: "mistralai/mistral-7b-instruct:free",
+    messages: [
+      {
+        role: "user",
+        content: $question
+      }
+    ]
+  }')
+
+ANSWER=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  -d "$json_payload" | jq -r .choices[0].message.content)
+
+echo -e "$ANSWER"
