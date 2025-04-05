@@ -12,7 +12,7 @@ This script allows you to quickly get AI-powered answers to your questions using
 ### Steps
 1. **Download the script:**
 ```bash
-curl -O https://github.com/Maksonik/terminal_ai_assistant/blob/main/ai_help
+git clone https://github.com/Maksonik/terminal_ai_assistant
 ```
 1. **Go to the folder**:
 ```bash
