@@ -34,7 +34,7 @@ OPENROUTER_API_KEY=$(<"$CONFIG_FILE")
 echo "Write your question:"
 read user_question
 
-PROMPT="[Rules: 1) Answer in 1-2 sentences 2) Respond in question's language 3) Add one example only if absolutely necessary 4) No additional text] Question: $user_question"
+PROMPT="[Rules: 1) Answer in 3-4 sentences 2) Respond in question's language 3) Add one example only if absolutely necessary 4) No additional text] Question: $user_question"
 
 json_payload=$(jq -n \
   --arg question "$PROMPT" \
