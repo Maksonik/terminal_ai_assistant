@@ -1,4 +1,3 @@
-# terminal_ai_assistant
 # 📖 AI Help Terminal Script
 
 This script allows you to quickly get AI-powered answers to your questions using OpenRouter's API with the Mistral 7B Instruct model.
